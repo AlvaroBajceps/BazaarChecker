@@ -165,7 +165,7 @@ namespace BazaarChecker
             // tray_Notify
             // 
             this.tray_Notify.BalloonTipText = "Remember, I\'am down here ;)";
-            this.tray_Notify.Icon = ((System.Drawing.Icon)(resources.GetObject("tray_Notify.Icon")));
+            this.tray_Notify.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.tray_Notify.Text = "Bazaaar Checker";
             this.tray_Notify.Click += new System.EventHandler(this.tray_Notify_Click);
             // 

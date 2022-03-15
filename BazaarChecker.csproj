@@ -5,6 +5,11 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>BC.ico</ApplicationIcon>
+    <Win32Resource />
+    <Authors>Marcin Walczyk</Authors>
+    <Company />
+    <Product>BazaarChecker</Product>
+    <PackageProjectUrl>https://github.com/AlvaroBajceps/BazaarChecker</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
