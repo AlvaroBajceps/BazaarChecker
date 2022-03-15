@@ -6,11 +6,22 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>BC.ico</ApplicationIcon>
     <Win32Resource />
-    <Authors>Marcin Walczyk</Authors>
+    <Authors>AlvaroBajceps</Authors>
     <Company />
     <Product>BazaarChecker</Product>
-    <PackageProjectUrl>https://github.com/AlvaroBajceps/BazaarChecker</PackageProjectUrl>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryType></RepositoryType>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageLicenseFile></PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <StartupObject>BazaarChecker.Program</StartupObject>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="GNU GPL.txt" />
+    <None Remove="GNU GPL.txt" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Panels\AuctionList.cs">
@@ -28,10 +39,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>
