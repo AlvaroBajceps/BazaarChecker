@@ -16,6 +16,8 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <StartupObject>BazaarChecker.Program</StartupObject>
     <NoWin32Manifest>true</NoWin32Manifest>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
 
   <ItemGroup>

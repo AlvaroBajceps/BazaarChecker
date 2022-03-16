@@ -23,13 +23,13 @@ namespace BazaarChecker.Classes
             return JsonSerializer.Deserialize<Bazaar>(responde.Result.Content.ReadAsStringAsync().Result);
         }
 
-        public static async Task<ActiveAuctions> GetWholeAh()
+        public static ActiveAuctions GetWholeAh()
         {
             var completeActiveAuctions = new ActiveAuctions();
             List<Task<ActiveAuctions>> downloadTasks = new List<Task<ActiveAuctions>>();
 
             //pobieranie pierszej strony aby poznac ilosc stron do pobrania
-            var responde = await httpClient.GetAsync($"https://api.hypixel.net/skyblock/auctions");
+            var responde = httpClient.GetAsync($"https://api.hypixel.net/skyblock/auctions").Result;
             completeActiveAuctions = JsonSerializer.Deserialize<ActiveAuctions>(responde.Content.ReadAsStringAsync().Result);
             
             for(UInt16 i = 1; i < completeActiveAuctions.totalPages; i++)
@@ -37,13 +37,15 @@ namespace BazaarChecker.Classes
                 downloadTasks.Add(GetAHPage(i));
             }
 
-            foreach (var item in await Task.WhenAll(downloadTasks))
+            Task.WaitAll(downloadTasks.ToArray());
+
+            foreach (var item in downloadTasks)
             {
-                if(item.success == false)
+                if(item.Result.success == false)
                 {
                     throw new Exception("NotAllAHDownloadWasSuccesfull");
                 }
-                completeActiveAuctions.auctions.AddRange(item.auctions);
+                completeActiveAuctions.auctions.AddRange(item.Result.auctions);
             }
             responde.Dispose();
             return completeActiveAuctions;

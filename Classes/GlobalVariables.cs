@@ -27,7 +27,9 @@ namespace BazaarChecker.Classes
     {
         public static Bazaar bazaar = new Bazaar();
         public static Mutex bazaar_Mutex = new Mutex();
+
         public static ActiveAuctions activeAuctions = new ActiveAuctions();
+        public static GroupedAuctions groupedAuctions = new GroupedAuctions();
         public static Mutex activeAuctions_Mutex = new Mutex();
     }
 }

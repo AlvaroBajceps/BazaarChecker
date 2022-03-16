@@ -27,55 +27,6 @@ namespace BazaarChecker
 {
     public partial class MainForm : Form
     {
-        class SAHComparer : IComparer<Auction>
-        {
-            public int Compare(Auction a, Auction b)
-            {
-                //First, BIN, next Auction
-                if (a.bin && !b.bin)
-                {
-                    return -1;
-                }
-                else if (!a.bin && b.bin)
-                {
-                    return 1;
-                }
-                else
-                {
-                    //Then by category
-                    var categoryCompared = a.category.CompareTo(b.category);
-                    if (categoryCompared < 0)
-                    {
-                        return -1;
-                    }
-                    else if (categoryCompared > 0)
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        //Next is name
-                        var nameCompared = a.item_name.CompareTo(b.item_name);
-                        if (nameCompared < 0)
-                        {
-                            return -1;
-                        }
-                        else if (nameCompared > 0)
-                        {
-                            return 1;
-                        }
-                        else
-                        {
-                            //finally lowest pfu to higest pfu 
-                            var a_pfu = (a.higest_bid_amount == 0m ? a.starting_bid : a.higest_bid_amount);
-                            var b_pfu = (b.higest_bid_amount == 0m ? b.starting_bid : b.higest_bid_amount);
-                            return a_pfu.CompareTo(b_pfu);
-                        }
-                    }
-                }
-            }
-        }
-
         private bool inSettings = false;
 
         public delegate void ClosePanel();
@@ -215,11 +166,44 @@ namespace BazaarChecker
 
         private void ah_Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            var dataT = DataDownloader.GetWholeAh();
-            var data = dataT.Result;
-            data.auctions.Sort(new SAHComparer());
+            var ahStamdard = DataDownloader.GetWholeAh();
+            ahStamdard.auctions.Sort(new Comparison<Auction>((x, y) => x.item_name.CompareTo(y.item_name)));
+
+            GroupedAuctions ahGrouped = new();
+            ahGrouped.Auctions = new();
+
+            //Knowing that ahStamdard is sorted we can look for same item until one not match,
+            //we can move to next then item, unitl we run out of items
+            for (int idx = 0; idx < ahStamdard.auctions.Count;)
+            {
+                var workingList = new List<Auction>();
+                workingList.Add(ahStamdard.auctions[idx++]);
+
+                //idx < ahStamdard.auctions.Count must be be here in case we run out of items
+                for (; idx < ahStamdard.auctions.Count && ahStamdard.auctions[idx].item_name == workingList[0].item_name; idx++)
+                {
+                    workingList.Add(ahStamdard.auctions[idx]);
+                }
+
+                ahGrouped.Auctions.Add(workingList[0].item_name, workingList);
+            }
+
+            ahGrouped.LastUpdated = ahStamdard.lastUpdated;
+            ahGrouped.TotalAuctions = ahStamdard.totalAuctions;
+
+            // var lastUsedName = "";
+            //foreach (var auction in ahStamdard.auctions)
+            //{
+            //    if (auction.item_name == lastUsedName) continue;
+
+            //    lastUsedName = auction.item_name;
+
+            //    ahGrouped.Auctions.Add(lastUsedName, ahStamdard.auctions.FindAll(new Predicate<Auction>(target => target.item_name == lastUsedName)));
+            //}
+
             GlobalVariables.activeAuctions_Mutex.WaitOne();
-            GlobalVariables.activeAuctions = data;
+            GlobalVariables.activeAuctions = ahStamdard;
+            GlobalVariables.groupedAuctions = ahGrouped;
             GlobalVariables.activeAuctions_Mutex.ReleaseMutex();
 
         }

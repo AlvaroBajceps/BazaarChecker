@@ -85,4 +85,12 @@ namespace BazaarChecker
         public List<Auction> auctions { set; get; }
     }
 
+
+
+    public struct GroupedAuctions
+    {
+        public UInt64 LastUpdated { set; get; }
+        public UInt32 TotalAuctions { set; get; }
+        public SortedDictionary<string, List<Auction>> Auctions { set; get; }
+    }
 }
