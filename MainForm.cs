@@ -52,6 +52,30 @@ namespace BazaarChecker
             }
         }
 
+        public static string GiveMeAscii(string input)
+        {
+            var keyString = "";
+            var inputArray = input.Normalize(System.Text.NormalizationForm.FormKD).ToCharArray();
+            foreach (var item in inputArray)
+            {
+                if (item >= 0 && item <= 127)
+                {
+                    keyString += item;
+                }
+            }
+            return keyString.TrimStart().TrimEnd();
+        }
+
+        public static string ExcludeSquareBracket(string input)
+        {
+            while (input.Contains('['))
+            {
+                input = input.Remove(input.IndexOf('['), input.IndexOf(']') - input.IndexOf('[')+1);
+            }
+            return input.TrimStart().TrimEnd();
+        }
+
+
         public void ClearPanel()
         {
             if (inSettings)
@@ -167,7 +191,20 @@ namespace BazaarChecker
         private void ah_Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             var ahStamdard = DataDownloader.GetWholeAh();
-            ahStamdard.auctions.Sort(new Comparison<Auction>((x, y) => x.item_name.CompareTo(y.item_name)));
+            ahStamdard.auctions.Sort(new Comparison<Auction>(
+                (x, y) =>
+                {
+                    var test1 = ExcludeSquareBracket(GiveMeAscii(x.item_name)).CompareTo(ExcludeSquareBracket(GiveMeAscii(y.item_name)));
+                    if (test1 == 0)
+                    {
+                        return x.item_name.CompareTo(y.item_name);
+                    }
+                    else
+                    {
+                        return test1;
+                    }
+                }
+                ));
 
             GroupedAuctions ahGrouped = new();
             ahGrouped.Auctions = new();
@@ -179,13 +216,15 @@ namespace BazaarChecker
                 var workingList = new List<Auction>();
                 workingList.Add(ahStamdard.auctions[idx++]);
 
+                var groupName = ExcludeSquareBracket(GiveMeAscii(workingList[0].item_name));
+
                 //idx < ahStamdard.auctions.Count must be be here in case we run out of items
-                for (; idx < ahStamdard.auctions.Count && ahStamdard.auctions[idx].item_name == workingList[0].item_name; idx++)
+                for (; idx < ahStamdard.auctions.Count && ExcludeSquareBracket(GiveMeAscii(ahStamdard.auctions[idx].item_name)) == groupName; idx++)
                 {
                     workingList.Add(ahStamdard.auctions[idx]);
                 }
 
-                ahGrouped.Auctions.Add(workingList[0].item_name, workingList);
+                ahGrouped.Auctions.Add(groupName, workingList);
             }
 
             ahGrouped.LastUpdated = ahStamdard.lastUpdated;
@@ -223,7 +262,7 @@ namespace BazaarChecker
         #endregion
 
 
-       
+
 
 
     }

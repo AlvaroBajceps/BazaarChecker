@@ -52,7 +52,7 @@ namespace BazaarChecker.Panels
 
             foreach (var auctionGroup in GlobalVariables.groupedAuctions.Auctions)
             {
-                ListViewItem item = new ListViewItem(auctionGroup.Value[0].item_name);
+                ListViewItem item = new ListViewItem(auctionGroup.Key);
 
                 decimal lowestPrice = decimal.MaxValue;
                 foreach (var auction in auctionGroup.Value)
