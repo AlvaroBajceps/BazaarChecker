@@ -42,7 +42,7 @@ namespace BazaarChecker.Panels
         private void OnAHUpdateCompleate(object sender, RunWorkerCompletedEventArgs e)
         {
             GlobalVariables.activeAuctions_Mutex.WaitOne();
-            if (GlobalVariables.activeAuctions.auctions == null)
+            if (GlobalVariables.groupedAuctions.Auctions == null)
             {
                 GlobalVariables.activeAuctions_Mutex.ReleaseMutex();
                 return;
@@ -50,17 +50,24 @@ namespace BazaarChecker.Panels
 
             List<ListViewItem> newList = new List<ListViewItem>();
 
-            foreach (var auction in GlobalVariables.activeAuctions.auctions)
+            foreach (var auctionGroup in GlobalVariables.groupedAuctions.Auctions)
             {
-                ListViewItem item = new ListViewItem(auction.item_name);
-                item.SubItems.Add(auction.category);
-                item.SubItems.Add(auction.tier);
-                item.SubItems.Add(auction.bin ? "BIN" : "Auction");
-                item.SubItems.Add((auction.higest_bid_amount == 0m ? auction.starting_bid : auction.higest_bid_amount).ToString("F"));
+                ListViewItem item = new ListViewItem(auctionGroup.Value[0].item_name);
+
+                decimal lowestPrice = decimal.MaxValue;
+                foreach (var auction in auctionGroup.Value)
+                {
+                    var pfu = (auction.higest_bid_amount == 0m ? auction.starting_bid : auction.higest_bid_amount);
+                    lowestPrice = lowestPrice <= pfu ? lowestPrice : pfu;
+                }
+
+                item.SubItems.Add(auctionGroup.Value[0].category);
+                item.SubItems.Add(lowestPrice.ToString("F1"));
+                item.SubItems.Add(auctionGroup.Value.Count.ToString());
                 newList.Add(item);
             }
 
-            lastDataTimeStamp = (Int64)GlobalVariables.activeAuctions.lastUpdated;
+            lastDataTimeStamp = (Int64)GlobalVariables.groupedAuctions.LastUpdated;
             GlobalVariables.activeAuctions_Mutex.ReleaseMutex();
 
             //pro update TM ;)

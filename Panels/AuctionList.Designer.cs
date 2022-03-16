@@ -38,7 +38,6 @@ namespace BazaarChecker.Panels
             this.timeElapsed_Label = new System.Windows.Forms.Label();
             this.close_Button = new System.Windows.Forms.Button();
             this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
             this.SuspendLayout();
             // 
             // listView1
@@ -53,8 +52,7 @@ namespace BazaarChecker.Panels
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5});
+            this.columnHeader4});
             this.listView1.ForeColor = System.Drawing.Color.White;
             this.listView1.FullRowSelect = true;
             this.listView1.HideSelection = false;
@@ -77,8 +75,9 @@ namespace BazaarChecker.Panels
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Rarity";
-            this.columnHeader3.Width = 80;
+            this.columnHeader3.Text = "Lowest Price";
+            this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnHeader3.Width = 120;
             // 
             // tick_Timer
             // 
@@ -116,13 +115,9 @@ namespace BazaarChecker.Panels
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "BIN?";
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "PriceForU©";
-            this.columnHeader5.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.columnHeader5.Width = 100;
+            this.columnHeader4.Text = "Items on auction";
+            this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnHeader4.Width = 120;
             // 
             // AuctionList
             // 
@@ -153,6 +148,5 @@ namespace BazaarChecker.Panels
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }
