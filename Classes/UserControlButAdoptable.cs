@@ -59,7 +59,6 @@ namespace BazaarChecker.Classes
 
         public delegate void AdoptionHouseEventHandler(Control tak);
 
-        [Obsolete("Designer Usage Only ONLY", true)]
         public UserControlButAdoptable()
         {
             this.options = CreationOptions.asUsual;
