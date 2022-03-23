@@ -42,6 +42,9 @@ namespace BazaarChecker.Classes
         private bool sortingAscending = false;
         private int sortingColumn = 0;
 
+        public delegate List<string> ItemToView_Delegate(object item);
+        public ItemToView_Delegate ItemToView;
+
 
         public HDataViewBase()
         {
@@ -49,7 +52,7 @@ namespace BazaarChecker.Classes
             Options = CreationOptions.resizeWithParent;
         }
 
-        public void RefreshList<ListType>(List<ListType> list, Func<ListType, List<string>> itemToView)
+        public void RefreshList<ListType>(List<ListType> list) 
         {
             if (list == null || list.Count == 0)
             {
@@ -59,7 +62,7 @@ namespace BazaarChecker.Classes
 
             foreach (ListType item in list)
             {
-                newList.Add(new ListViewItem(itemToView(item).ToArray()));
+                newList.Add(new ListViewItem(ItemToView(item).ToArray()));
             }
 
             //pro update TM ;)
@@ -200,6 +203,7 @@ namespace BazaarChecker.Classes
             // 
             this.tick_Timer.Enabled = true;
             this.tick_Timer.Interval = 50;
+            this.tick_Timer.Tick += new EventHandler(this.tick_Timer_Tick);
             // 
             // close_Button
             // 
