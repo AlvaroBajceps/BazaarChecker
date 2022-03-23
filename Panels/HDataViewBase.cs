@@ -50,6 +50,7 @@ namespace BazaarChecker.Classes
         {
             InitializeComponent();
             Options = CreationOptions.resizeWithParent;
+            theListView.Sorting = SortOrder.Ascending;
         }
 
         public void RefreshList<ListType>(List<ListType> list)
