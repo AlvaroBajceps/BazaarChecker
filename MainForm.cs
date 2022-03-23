@@ -33,6 +33,11 @@ namespace BazaarChecker
         private ClosePanel closePanelContent;
         public ClosePanel ClosePanelContent { get => closePanelContent; }
 
+        private HDataViewBase dataViewPanel;
+        private bool dataViewPanel_doRefreshWithAH = false;
+        private bool dataViewPanel_doRefreshWithAHGroup = false;
+        private bool dataViewPanel_doRefreshWithBazaar = false;
+
         public MainForm()
         {
             InitializeComponent();
@@ -68,9 +73,9 @@ namespace BazaarChecker
 
         public static string ExcludeSquareBracket(string input)
         {
-            while (input.Contains('['))
+            while (input.Contains("[Lvl"))
             {
-                input = input.Remove(input.IndexOf('['), input.IndexOf(']') - input.IndexOf('[')+1);
+                input = input.Remove(input.IndexOf('['), input.IndexOf(']') - input.IndexOf('[') + 1);
             }
             return input.TrimStart().TrimEnd();
         }
@@ -90,6 +95,10 @@ namespace BazaarChecker
             {
                 item.Dispose();
             }
+            dataViewPanel = null;
+            dataViewPanel_doRefreshWithAH = false;
+            dataViewPanel_doRefreshWithAHGroup = false;
+            dataViewPanel_doRefreshWithBazaar = false;
         }
 
         #region Form Events
@@ -134,7 +143,35 @@ namespace BazaarChecker
 
         {
             ClearPanel();
-            main_Panel.Controls.Add(new Panels.BazaarList());
+            //main_Panel.Controls.Add(new Panels.BazaarList());
+
+            dataViewPanel = new HDataViewBase();
+            dataViewPanel_doRefreshWithBazaar = true;
+            dataViewPanel.theListView.Columns.Add("Item");
+            dataViewPanel.theListView.Columns.Add("QSell Price");
+            dataViewPanel.ItemToView = (item) =>
+            {
+                var newList = new List<string>();
+                var x = (Product)item;
+                newList.Add(x.product_id);
+                newList.Add(x.quick_status.sellPrice.ToString());
+                return newList;
+            };
+
+            main_Panel.Controls.Add(dataViewPanel);
+
+            GlobalVariables.bazaar_Mutex.WaitOne();
+            if (GlobalVariables.bazaar.products != null)
+            {
+                var data = new List<Product>(GlobalVariables.bazaar.products.Values);
+                GlobalVariables.bazaar_Mutex.ReleaseMutex();
+                dataViewPanel.RefreshList(data);
+            }
+            else
+            {
+                GlobalVariables.bazaar_Mutex.ReleaseMutex();
+            }
+
         }
 
         private void menu_dataView_ah_MenuItem_Click(object sender, EventArgs e)
@@ -162,6 +199,8 @@ namespace BazaarChecker
         }
         #endregion
 
+
+
         #region Other Events
         private void bazaar_Timer_Tick(object sender, EventArgs e)
         {
@@ -180,6 +219,13 @@ namespace BazaarChecker
         private void bazaar_Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             bazaar_Timer.Enabled = inSettings ? false : ProgramSettings.settings.BazzarRefresh;
+            if (dataViewPanel_doRefreshWithBazaar)
+            {
+                GlobalVariables.bazaar_Mutex.WaitOne();
+                var data = new List<Product>(GlobalVariables.bazaar.products.Values);
+                GlobalVariables.bazaar_Mutex.ReleaseMutex();
+                dataViewPanel.RefreshList(data);
+            }
         }
 
         private void ah_Timer_Tick(object sender, EventArgs e)
@@ -250,6 +296,20 @@ namespace BazaarChecker
         private void ah_Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             ah_Timer.Enabled = inSettings ? false : ProgramSettings.settings.AuctionHouseRefresh;
+            if (dataViewPanel_doRefreshWithAH)
+            {
+                GlobalVariables.bazaar_Mutex.WaitOne();
+                var data = new List<Auction>(GlobalVariables.activeAuctions.auctions);
+                GlobalVariables.bazaar_Mutex.ReleaseMutex();
+                dataViewPanel.RefreshList(data);
+            }
+            else if (dataViewPanel_doRefreshWithAHGroup)
+            {
+                GlobalVariables.activeAuctions_Mutex.WaitOne();
+                var data = new List<List<Auction>>(GlobalVariables.groupedAuctions.Auctions.Values);
+                GlobalVariables.activeAuctions_Mutex.ReleaseMutex();
+                dataViewPanel.RefreshList(data);
+            }
         }
 
         private void tray_Notify_Click(object sender, EventArgs e)
