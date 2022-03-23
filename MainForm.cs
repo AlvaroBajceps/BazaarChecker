@@ -43,6 +43,8 @@ namespace BazaarChecker
             InitializeComponent();
             closePanelContent = new(ClearPanel);
 
+            GlobalVariables.allItems = DataDownloader.GetAllItemsData();
+
             if (!ProgramSettings.Read())
             {
                 main_Panel.Controls.Add(new Panels.Settings_Panel());
@@ -153,7 +155,16 @@ namespace BazaarChecker
             {
                 var newList = new List<string>();
                 var x = (Product)item;
-                newList.Add(x.product_id);
+                var chossenOne = GlobalVariables.allItems.items.Find((cur) => cur.id == x.product_id).name;
+
+                if (chossenOne != null)
+                {
+                    newList.Add(GlobalVariables.allItems.items.Find((cur) => cur.id == x.product_id).name);
+                }
+                else
+                {
+                    newList.Add(x.product_id + " (ID)");
+                }
                 newList.Add(x.quick_status.sellPrice.ToString());
                 return newList;
             };

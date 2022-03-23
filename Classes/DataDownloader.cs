@@ -57,6 +57,12 @@ namespace BazaarChecker.Classes
             if (!responde.IsSuccessStatusCode) throw new Exception("BazaarDownloadWasNotSuccefull");
             return JsonSerializer.Deserialize<ActiveAuctions>(await responde.Content.ReadAsStringAsync());
         }
+
+        public static Items GetAllItemsData()
+        {
+            var responde = httpClient.GetAsync("https://api.hypixel.net/resources/skyblock/items");
+            return JsonSerializer.Deserialize<Items>(responde.Result.Content.ReadAsStringAsync().Result);
+        }
     }
 
     

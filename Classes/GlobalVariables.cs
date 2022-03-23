@@ -31,5 +31,9 @@ namespace BazaarChecker.Classes
         public static ActiveAuctions activeAuctions = new ActiveAuctions();
         public static GroupedAuctions groupedAuctions = new GroupedAuctions();
         public static Mutex activeAuctions_Mutex = new Mutex();
+
+        public static Items allItems = new Items();
+        //it will be used only in Form therad so no need for mutex
+        //public static Mutex allItems_Mutex = new Mutex();
     }
 }

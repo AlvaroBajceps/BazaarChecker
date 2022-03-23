@@ -93,4 +93,23 @@ namespace BazaarChecker
         public UInt32 TotalAuctions { set; get; }
         public SortedDictionary<string, List<Auction>> Auctions { set; get; }
     }
+
+
+
+    public struct Item
+    {
+        public string id { set; get; }
+        //public string material { set; get; }
+        public string name { set; get; }
+        //public string tier { set; get; }
+        //public string color { set; get; }
+        //public string skin { set; get; }
+    }
+
+    public struct Items
+    {
+        public bool success { set; get; }
+        public UInt64 lastUpdated { set; get; }
+        public List<Item> items { set; get; }
+    }
 }
